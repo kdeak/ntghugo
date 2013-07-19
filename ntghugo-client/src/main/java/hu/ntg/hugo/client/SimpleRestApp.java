@@ -37,7 +37,7 @@ public class SimpleRestApp {
         log.info("Starting SimpleRestApp application");
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SimpleRestAppFactory.class);
         WelcomeController mainController = context.getBean(WelcomeController.class);
-        String msg = mainController.sayHello();
+        String msg = mainController.sayHello("Krisz").getMessage();
         log.info("Welcome Controler says: " + msg);
     }
 }
