@@ -1,5 +1,7 @@
 package hu.ntg.hugo.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A Spring configuration class that provides factory methods for all the main
@@ -56,7 +55,7 @@ public class SimpleRestAppFactory {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+        List<HttpMessageConverter<?>> converters = new ArrayList<>();
         converters.add(new MappingJacksonHttpMessageConverter());
         restTemplate.setMessageConverters(converters);
         return restTemplate;
@@ -82,7 +81,7 @@ public class SimpleRestAppFactory {
      */
     @Bean
     public WelcomeController welcomeController() {
-        return loadController("/fxml/Welcome.fxml");
+        return loadController();
     }
 
     /**
@@ -102,8 +101,12 @@ public class SimpleRestAppFactory {
      */
     @Bean
     public WelcomeRestService welcomeRestService() {
-        // env.getProperty will perform a lookup on our properties file using the key 'server.url'
-        return new WelcomeRestService(env.getProperty("server.url"));
+        return new WelcomeRestService();
+    }
+
+    @Bean
+    public String serverUrl() {
+        return env.getProperty("server.url");
     }
 
     /**
@@ -115,21 +118,12 @@ public class SimpleRestAppFactory {
      * method hooks reverses the focus of the FXMLLoader to make things
      * Controller based.
      *
-     * @param fxmlFile the file to load the FXML from, this should be relative
-     * to the classpath.
      * @param <T> the type of Controller to return is inferred by whatever you
      * assign the result of this method to.
      * @return the Controller loaded from the FXML specified which should have
      * its view loaded and attached.
      */
-    private <T> T loadController(String fxmlFile) {
+    private <T> T loadController() {
         return (T) new WelcomeController();
-//        try {
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.load(getClass().getResourceAsStream(fxmlFile));
-//            return (T) loader.getController();
-//        } catch (IOException e) {
-//            throw new RuntimeException(String.format("Unable to load FXML file '%s'", fxmlFile), e);
-//        }
     }
 }
